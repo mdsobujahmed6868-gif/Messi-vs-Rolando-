@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball Battle - Messi vs Ronaldo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-lg bg-gray-800 rounded-2xl shadow-2xl p-6 border border-gray-700 text-center">
+        <h1 class="text-3xl font-bold mb-6 text-yellow-400">⚽ Ball Battle ⚽</h1>
+
+        <!-- মেইন স্টার্ট স্ক্রিন -->
+        <div id="startScreen">
+            <p class="text-gray-300 mb-6">আপনার কিংবদন্তি বেছে নিন:</p>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <!-- মেসি (বাস্তব ছবি সহ) -->
+                <div onclick="selectLegend('Messi')" id="cardMessi" class="bg-gray-700 p-4 rounded-xl border-2 border-transparent cursor-pointer flex flex-col items-center hover:border-blue-500 transition">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mb-2 border-2 border-blue-400 bg-gray-600">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg" alt="Messi" class="w-full h-full object-cover">
+                    </div>
+                    <span class="font-bold text-blue-400">Messi</span>
+                </div>
+
+                <!-- রোনালদো (বাস্তব ছবি সহ) -->
+                <div onclick="selectLegend('Ronaldo')" id="cardRonaldo" class="bg-gray-700 p-4 rounded-xl border-2 border-transparent cursor-pointer flex flex-col items-center hover:border-red-500 transition">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mb-2 border-2 border-red-400 bg-gray-600">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Cristiano_Ronaldo_in_Al_Nassr_%28cropped%29.jpg" alt="Ronaldo" class="w-full h-full object-cover">
+                    </div>
+                    <span class="font-bold text-red-400">Ronaldo</span>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition">গেম শুরু করুন</button>
+        </div>
+
+        <!-- ব্যাটেল/অ্যাকশন স্ক্রিন -->
+        <div id="battleScreen" class="hidden">
+            <div class="flex justify-between items-center mb-4 bg-gray-700 p-3 rounded-lg">
+                <span id="chosenPlayer" class="font-bold text-yellow-300">প্লেয়ার: </span>
+                <span id="scoreDisplay" class="font-bold text-green-400">স্কোর: 0</span>
+            </div>
+
+            <div class="w-full h-56 bg-emerald-700 rounded-xl flex items-center justify-center relative overflow-hidden mb-6 border-2 border-gray-600 cursor-pointer" onclick="makeAction()">
+                <div id="actionBall" class="absolute w-8 h-8 bg-white rounded-full shadow-md transition-all duration-200" style="left: 50%; top: 50%;"></div>
+                <span class="absolute bottom-2 text-xs text-white/80 bg-black/30 px-2 py-1 rounded">বলের উপর ক্লিক করে খেলুন!</span>
+            </div>
+
+            <button onclick="makeAction()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition">হিট / শ্যুট!</button>
+            <button onclick="goHome()" class="mt-3 text-xs text-gray-400 underline">মেনুতে ফিরে যান</button>
+        </div>
+    </div>
+
+    <!-- অরিজিনাল গেম লজিক ও স্ক্রিপ্ট -->
+    <script src="game.js"></script>
+    <script>
+        let chosenLegend = '';
+        let currentScore = 0;
+
+        function selectLegend(name) {
+            chosenLegend = name;
+            document.getElementById('cardMessi').classList.remove('border-blue-500');
+            document.getElementById('cardRonaldo').classList.remove('border-red-500');
+            
+            if(name === 'Messi') {
+                document.getElementById('cardMessi').classList.add('border-blue-500');
+            } else {
+                document.getElementById('cardRonaldo').classList.add('border-red-500');
+            }
+        }
+
+        function startGame() {
+            if(!chosenLegend) {
+                alert('দয়া করে প্রথমে মেসি বা রোনালদো সিলেক্ট করুন!');
+                return;
+            }
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('battleScreen').classList.remove('hidden');
+            document.getElementById('chosenPlayer').innerText = `প্লেয়ার: ${chosenLegend}`;
+            currentScore = 0;
+            document.getElementById('scoreDisplay').innerText = `স্কোর: ${currentScore}`;
+        }
+
+        function makeAction() {
+            currentScore += 10;
+            document.getElementById('scoreDisplay').innerText = `স্কোর: ${currentScore}`;
+            
+            // বলের মুভমেন্ট
+            const ball = document.getElementById('actionBall');
+            ball.style.left = Math.floor(Math.random() * 80) + 10 + '%';
+            ball.style.top = Math.floor(Math.random() * 70) + 10 + '%';
+
+            if(currentScore >= 100) {
+                alert(`অভিনন্দন! ${chosenLegend} জয়ী হয়েছে! 🏆`);
+                goHome();
+            }
+        }
+
+        function goHome() {
+            document.getElementById('battleScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            chosenLegend = '';
+        }
+    </script>
+</body>
+</html>
